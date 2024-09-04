@@ -10,7 +10,7 @@
 
             Console.WriteLine();
 
-            RSA.Message = "Rucham psa jak sra.";
+            RSA.Message = "Lorem ipsum";
             Console.WriteLine($"Message to encrypt - {RSA.Message}");
             RSA.EncryptMessage();
             Console.WriteLine($"Encrypted message - {RSA.EncryptedMessage}");
