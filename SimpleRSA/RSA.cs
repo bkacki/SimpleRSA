@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace SimpleRSA
 {
@@ -11,12 +7,12 @@ namespace SimpleRSA
         public static Random Random = new Random();
 
         //private static List<int> _primes => new PrimeNumbers().ToList();
-        private static List<int> _primes => new List<int>() { 13, 11};
+        private static List<int> _primes => new List<int>() { 13, 11 };
 
         private static int _p, _q, _n, _phi, _e, _d;
 
-        private static string _publicKey;
-        public static string PublicKey 
+        private static string? _publicKey;
+        public static string? PublicKey
         {
             get
             {
@@ -34,8 +30,8 @@ namespace SimpleRSA
                     _phi = (_p - 1) * (_q - 1);
                     _n = _p * _q;
 
-                    for (_e = 3; _greatestCommonDivisor(_e, _phi) != 1; _e += 2);
-                    
+                    for (_e = 3; _greatestCommonDivisor(_e, _phi) != 1; _e += 2) ;
+
                     _d = _reverseMod(_e, _phi);
 
                     _publicKey = "(" + _e.ToString() + "," + _n.ToString() + ")";
@@ -47,10 +43,10 @@ namespace SimpleRSA
                 }
             }
         }
-        
-        public static string PrivateKey { get; private set; }
 
-       private static int _greatestCommonDivisor(int a, int b)
+        public static string? PrivateKey { get; private set; }
+
+        private static int _greatestCommonDivisor(int a, int b)
         {
             int t;
 
@@ -90,22 +86,24 @@ namespace SimpleRSA
             PublicKey = "Initialize";
         }
 
-        public static string Message { get; set; }
+        public static string? Message { get; set; }
 
-        private static string _encryptedMessage;
-        public static string EncryptedMessage
+        private static string? _encryptedMessage;
+        public static string? EncryptedMessage
         {
-            get 
-            { 
+            get
+            {
                 return _encryptedMessage;
             }
             private set
             {
-                byte[] encoded = Encoding.UTF8.GetBytes(Message);
+                byte[] encoded = Encoding.UTF8.GetBytes(Message!);
                 byte[] encrypted = new byte[encoded.Length];
-                for(int i= 0; i < encoded.Length; i++)
-                    encrypted[i] = (byte)RSAEncrypt(encoded[i], _e, _n);
-
+                for (int i = 0; i < encoded.Length; i++)
+                {
+                    System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+                    byte[] bytes = encoding.GetBytes(encoded[i].ToString());
+                }
                 _encryptedMessage = Encoding.UTF8.GetString(encrypted);
             }
         }
@@ -114,8 +112,8 @@ namespace SimpleRSA
             EncryptedMessage = "Encrypt";
         }
 
-        private static string _decryptedMessage;
-        public static string DecryptedMessage
+        private static string? _decryptedMessage;
+        public static string? DecryptedMessage
         {
             get
             {
@@ -123,7 +121,7 @@ namespace SimpleRSA
             }
             private set
             {
-                byte[] encoded = Encoding.UTF8.GetBytes(_encryptedMessage);
+                byte[] encoded = Encoding.UTF8.GetBytes(_encryptedMessage!);
                 byte[] decrypted = new byte[encoded.Length];
                 for (int i = 0; i < encoded.Length; i++)
                     decrypted[i] = (byte)RSAEncrypt(encoded[i], _d, _n);
@@ -142,7 +140,7 @@ namespace SimpleRSA
 
             for (int i = q; i > 0; i /= 2)
             {
-                if ((i % 2) == 1) 
+                if ((i % 2) == 1)
                     result = (result * pow) % n;
                 pow = (pow * pow) % n;
             }
