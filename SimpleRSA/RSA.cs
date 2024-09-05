@@ -104,8 +104,11 @@ namespace SimpleRSA
                 byte[] encoded = Encoding.UTF8.GetBytes(Message);
                 byte[] encrypted = new byte[encoded.Length];
                 for(int i= 0; i < encoded.Length; i++)
-                    encrypted[i] = (byte)RSAEncrypt(encoded[i], _e, _n);
-
+                for (int i = 0; i < encoded.Length; i++)
+                {
+                    System.Text.ASCIIEncoding encoding = new System.Text.ASCIIEncoding();
+                    byte[] bytes = encoding.GetBytes(encoded[i].ToString());
+                }
                 _encryptedMessage = Encoding.UTF8.GetString(encrypted);
             }
         }
