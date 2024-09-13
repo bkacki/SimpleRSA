@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
 namespace SimpleRSA
 {
@@ -10,10 +11,20 @@ namespace SimpleRSA
     {
         public static Random Random = new Random();
 
-        //private static List<int> _primes => new PrimeNumbers().ToList();
-        private static List<int> _primes => new List<int>() { 13, 11};
+        private static List<int> _primes => new PrimeNumbers().ToList();
+        //private static List<BigInteger> _primes => new List<BigInteger>() { 7901, 7907, 7919 };
 
-        private static int _p, _q, _n, _phi, _e, _d;
+        private static BigInteger _p, _q, _n, _phi, _e, _d;
+
+        public static void GenerateKeys()
+        {
+            PublicKey = "Initialize public and private key";
+        }
+
+        public static void GetPrimes()
+        {
+            Console.Write($"Primes used to generate keys: {_p}, {_q}.\n");
+        }
 
         private static string _publicKey;
         public static string PublicKey 
@@ -50,9 +61,9 @@ namespace SimpleRSA
         
         public static string PrivateKey { get; private set; }
 
-       private static int _greatestCommonDivisor(int a, int b)
+       private static BigInteger _greatestCommonDivisor(BigInteger a, BigInteger b)
         {
-            int t;
+            BigInteger t;
 
             while (b != 0)
             {
@@ -63,9 +74,9 @@ namespace SimpleRSA
             return a;
         }
 
-        private static int _reverseMod(int a, int n)
+        private static BigInteger _reverseMod(BigInteger a, BigInteger n)
         {
-            int a0, n0, p0, p1, q, r, t;
+            BigInteger a0, n0, p0, p1, q, r, t;
 
             p0 = 0; p1 = 1; a0 = a; n0 = n;
             q = n0 / a0;
@@ -85,11 +96,6 @@ namespace SimpleRSA
             return p1;
         }
 
-        public static void InitializePublicKey()
-        {
-            PublicKey = "Initialize";
-        }
-
         public static string Message { get; set; }
 
         private static string _encryptedMessage;
@@ -102,11 +108,16 @@ namespace SimpleRSA
             private set
             {
                 byte[] encoded = Encoding.UTF8.GetBytes(Message);
-                byte[] encrypted = new byte[encoded.Length];
-                for(int i= 0; i < encoded.Length; i++)
-                    encrypted[i] = (byte)RSAEncrypt(encoded[i], _e, _n);
+                List<byte> encryptedBytes = new List<byte>();
 
-                _encryptedMessage = Encoding.UTF8.GetString(encrypted);
+                // Szyfruj każdy bajt osobno
+                foreach (byte b in encoded)
+                {
+                    int encryptedBlock = RSAEncrypt(b, _e, _n); // Szyfrujemy każdy bajt
+                    encryptedBytes.AddRange(BitConverter.GetBytes(encryptedBlock)); // Dodajemy zaszyfrowane bajty
+                }
+
+                _encryptedMessage = Convert.ToBase64String(encryptedBytes.ToArray());
             }
         }
         public static void EncryptMessage()
@@ -121,26 +132,37 @@ namespace SimpleRSA
             {
                 return _decryptedMessage;
             }
+
             private set
             {
-                byte[] encoded = Encoding.UTF8.GetBytes(_encryptedMessage);
-                byte[] decrypted = new byte[encoded.Length];
-                for (int i = 0; i < encoded.Length; i++)
-                    decrypted[i] = (byte)RSAEncrypt(encoded[i], _d, _n);
+                byte[] encryptedBytes = Convert.FromBase64String(_encryptedMessage);
+                List<byte> decryptedBytes = new List<byte>();
 
-                _decryptedMessage = Encoding.UTF8.GetString(decrypted);
+                // Deszyfruj każdy blok 4-bajtowy (bo zaszyfrowane wartości to inty)
+                for (int i = 0; i < encryptedBytes.Length; i += 4)
+                {
+                    byte[] block = encryptedBytes.Skip(i).Take(4).ToArray();
+                    int encryptedBlock = BitConverter.ToInt32(block, 0);
+                    int decryptedBlock = RSAEncrypt(encryptedBlock, _d, _n);
+
+                    // Dodaj odszyfrowany bajt do listy
+                    decryptedBytes.Add((byte)decryptedBlock);
+                }
+
+                _decryptedMessage = Encoding.UTF8.GetString(decryptedBytes.ToArray());
             }
+
         }
         public static void DecryptMessage()
         {
             DecryptedMessage = "Decrypt";
         }
 
-        private static int _modularExponentiation(int pow, int q, int n)
+        private static BigInteger _modularExponentiation(BigInteger pow, BigInteger q, BigInteger n)
         {
-            int result = 1;
+            BigInteger result = 1;
 
-            for (int i = q; i > 0; i /= 2)
+            for (BigInteger i = q; i > 0; i /= 2)
             {
                 if ((i % 2) == 1) 
                     result = (result * pow) % n;
@@ -149,9 +171,9 @@ namespace SimpleRSA
             return result;
         }
 
-        public static int RSAEncrypt(int message, int e, int n)
+        public static int RSAEncrypt(BigInteger message, BigInteger e, BigInteger n)
         {
-            return _modularExponentiation(message, e, n);
+            return (int)_modularExponentiation(message, e, n);
         }
     }
 }
