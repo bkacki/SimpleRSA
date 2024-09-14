@@ -9,16 +9,24 @@ namespace SimpleRSA
 {
     public class PrimeNumbers : IEnumerable<int>
     {
-        private const int _primesLimit = 1000000;
+        private readonly int _lowerLimit;
+        private readonly int _upperLimit;
+
+        public PrimeNumbers(int lowerLimit = 1000, int upperLimit = 1000000)
+        {
+            _lowerLimit = lowerLimit;
+            _upperLimit = upperLimit;
+        }
+
         public IEnumerator<int> GetEnumerator()
         {
-            for (int i = 1000; i <= _primesLimit; i++)
+            foreach (var prime in SieveOfEratosthenes(_upperLimit))
             {
-                if (IsPrime(i))
+                if (prime >= _lowerLimit)
                 {
-                    yield return i;
+                    yield return prime;
                 }
-            }          
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -26,16 +34,35 @@ namespace SimpleRSA
             return GetEnumerator();
         }
 
-        static bool IsPrime(int number)
+        private static List<int> SieveOfEratosthenes(int limit)
         {
-            if (number < 2) return false;
-
-            for (int i = 2; i <= Math.Sqrt(number); i++)
+            bool[] isPrime = new bool[limit + 1];
+            for (int i = 2; i <= limit; i++)
             {
-                if (number % i == 0) return false;
+                isPrime[i] = true;
             }
 
-            return true;
+            for (int i = 2; i * i <= limit; i++)
+            {
+                if (isPrime[i])
+                {
+                    for (int j = i * i; j <= limit; j += i)
+                    {
+                        isPrime[j] = false;
+                    }
+                }
+            }
+
+            List<int> primes = new List<int>();
+            for (int i = 2; i <= limit; i++)
+            {
+                if (isPrime[i])
+                {
+                    primes.Add(i);
+                }
+            }
+
+            return primes;
         }
     }
 }
