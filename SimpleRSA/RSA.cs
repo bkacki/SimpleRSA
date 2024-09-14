@@ -23,8 +23,8 @@ namespace SimpleRSA
         private static string _encryptedMessage;
         public static string EncryptedMessage
         {
-            get 
-            { 
+            get
+            {
                 return _encryptedMessage;
             }
             private set
@@ -105,7 +105,8 @@ namespace SimpleRSA
                 // Decrypt each block
                 for (int i = 0; i < encryptedBytes.Length; i += byteLength)
                 {
-                    byte[] block = encryptedBytes.Skip(i).Take(byteLength).ToArray();
+                    byte[] blockToCheck = encryptedBytes.Skip(i).Take(byteLength).ToArray();
+                    byte[] block = blockToCheck.SkipWhile(x => x == 0).ToArray();
                     BigInteger encryptedBlock = new BigInteger(block);
                     BigInteger decryptedBlock = RSAEncrypt(encryptedBlock, _d, _n);
 
@@ -119,6 +120,17 @@ namespace SimpleRSA
                     }
 
                     decryptedBytes.AddRange(decryptedBlockBytes.SkipWhile(b => b == 0)); // Skip leading zeros
+
+                    bool equalBlocks = (String.Join(" ", blockToCheck) == String.Join(" ", block)) ? true : false;
+                    Console.WriteLine($"Diagnosis data: \n" +
+                        $"Are equal: {equalBlocks}\n" +
+                        $"BlockToCheck: {String.Join(" ", blockToCheck)}\n" +
+                        $"Block: {String.Join(" ", block)}\n" +
+                        $"Byte length: {byteLength}\n" +
+                        $"block size: {blockSize}\n" +
+                        $"encrypted block: {encryptedBlock}\n" +
+                        $"decrypted block: {decryptedBlock}\n" +
+                        $"decrypted block bytes: {Encoding.UTF8.GetString(decryptedBlockBytes)}\n");
                 }
 
                 _decryptedMessage = Encoding.UTF8.GetString(decryptedBytes.ToArray()).TrimEnd('\0');
@@ -219,7 +231,7 @@ namespace SimpleRSA
 
             for (BigInteger i = q; i > 0; i /= 2)
             {
-                if ((i % 2) == 1) 
+                if ((i % 2) == 1)
                     result = (result * pow) % n;
                 pow = (pow * pow) % n;
             }
