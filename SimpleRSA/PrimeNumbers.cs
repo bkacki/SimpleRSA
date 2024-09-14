@@ -12,7 +12,7 @@ namespace SimpleRSA
         private const int _primesLimit = 1000000;
         public IEnumerator<int> GetEnumerator()
         {
-            for (int i = 10; i <= _primesLimit; i++)
+            for (int i = 1000; i <= _primesLimit; i++)
             {
                 if (IsPrime(i))
                 {

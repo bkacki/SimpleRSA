@@ -99,7 +99,7 @@ namespace SimpleRSA
                 byte[] encryptedBytes = Convert.FromBase64String(_encryptedMessage);
                 List<byte> decryptedBytes = new List<byte>();
 
-                // Calculate block size and byte length
+                // Calculate byte length for each block
                 int byteLength = (int)Math.Ceiling((double)_n.GetByteCount());
 
                 // Decrypt each block
