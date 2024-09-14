@@ -20,6 +20,8 @@ namespace SimpleRSA
 
         public static string Message { get; set; }
 
+        public static void SetMessageToDecrypt(string value) => _encryptedMessage = value;
+
         private static string _encryptedMessage;
         public static string EncryptedMessage
         {
@@ -68,14 +70,14 @@ namespace SimpleRSA
 
                 _encryptedMessage = Convert.ToBase64String(encryptedBytes.ToArray());
 
-                /*byte[] encoded = Encoding.UTF8.GetBytes(Message);
+                /*FOR PRIMES LOWER THAN 1000
+                 * byte[] encoded = Encoding.UTF8.GetBytes(Message);
                 List<byte> encryptedBytes = new List<byte>();
 
-                // Szyfruj każdy bajt osobno
                 foreach (byte b in encoded)
                 {
-                    int encryptedBlock = (int)RSAEncrypt(b, _e, _n); // Szyfrujemy każdy bajt
-                    encryptedBytes.AddRange(BitConverter.GetBytes(encryptedBlock)); // Dodajemy zaszyfrowane bajty
+                    int encryptedBlock = (int)RSAEncrypt(b, _e, _n);
+                    encryptedBytes.AddRange(BitConverter.GetBytes(encryptedBlock));
                 }
 
                 _encryptedMessage = Convert.ToBase64String(encryptedBytes.ToArray());*/
@@ -121,6 +123,7 @@ namespace SimpleRSA
 
                     decryptedBytes.AddRange(decryptedBlockBytes.SkipWhile(b => b == 0)); // Skip leading zeros
 
+                    /*DIAGNOSIS
                     bool equalBlocks = (String.Join(" ", blockToCheck) == String.Join(" ", block)) ? true : false;
                     Console.WriteLine($"Diagnosis data: \n" +
                         $"Are equal: {equalBlocks}\n" +
@@ -131,11 +134,13 @@ namespace SimpleRSA
                         $"encrypted block: {encryptedBlock}\n" +
                         $"decrypted block: {decryptedBlock}\n" +
                         $"decrypted block bytes: {Encoding.UTF8.GetString(decryptedBlockBytes)}\n");
+                    END OF DIAGNOSIS*/
                 }
 
                 _decryptedMessage = Encoding.UTF8.GetString(decryptedBytes.ToArray()).TrimEnd('\0');
 
-                /*byte[] encryptedBytes = Convert.FromBase64String(_encryptedMessage);
+                /*FOR PRIMES LOWER THAN 1000
+                 * byte[] encryptedBytes = Convert.FromBase64String(_encryptedMessage);
                 List<byte> decryptedBytes = new List<byte>();
 
                 // Deszyfruj każdy blok 4-bajtowy (bo zaszyfrowane wartości to inty)
@@ -181,6 +186,20 @@ namespace SimpleRSA
             {
                 Console.WriteLine("An error occurred: " + ex.Message);
             }
+        }
+
+        public static void SetPublicKey(BigInteger e, BigInteger n)
+        {
+            _e = e;
+            _n = n;
+            PublicKey = "(" + _e.ToString() + "," + _n.ToString() + ")";
+        }
+
+        public static void SetPrivateKey(BigInteger d, BigInteger n)
+        {
+            _d = d;
+            _n = n;
+            PrivateKey = "(" + _d.ToString() + "," + _n.ToString() + ")";
         }
 
         public static void GetDiagnosticData()

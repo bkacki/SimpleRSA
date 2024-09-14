@@ -1,4 +1,6 @@
-﻿namespace SimpleRSA
+﻿using System.Numerics;
+
+namespace SimpleRSA
 {
     internal class Program
     {
@@ -6,19 +8,70 @@
         {
             ASCIIArtLogo();
 
-            RSA.GenerateKeys();
-            Console.WriteLine("Public key - " + RSA.PublicKey);
-            Console.WriteLine("Private key - " + RSA.PrivateKey);
-            RSA.GetDiagnosticData();
+            while (true)
+            {
+                int userInput;
+                Console.Write(@"MENU:
+[1] Generate Keys
+[2] Encrypt message
+[3] Decrypt message
+[4] Escape
+Enter: ");
+                while (int.TryParse(Console.ReadLine(), out userInput) && (userInput != 1 && userInput != 2 && userInput != 3))
+                    Console.Write(@"MENU:
+[1] Generate Keys
+[2] Encrypt message
+[3] Decrypt message
+[4] Escape
+Enter: ");
 
-            Console.WriteLine();
+                switch(userInput)
+                {
+                    case 1:
+                        RSA.GenerateKeys();
+                        Console.WriteLine($"Public key: {RSA.PublicKey}");
+                        Console.WriteLine($"Private key: {RSA.PrivateKey}");
+                        break;
+                    case 2:
+                        Console.Write("Message: ");
+                        var message = Console.ReadLine();
+                        while (message == string.Empty)
+                        {
+                            Console.Write("Message can't be empty, enter message: ");
+                            message = Console.ReadLine();
+                        }
+                        RSA.Message = message;
+                        Console.Write("Public key: ");
+                        var publicKey = Console.ReadLine();
+                        publicKey = publicKey.Trim('(', ')');
+                        string[] partsOfPublicKey = publicKey.Split(',');
+                        RSA.SetPublicKey(BigInteger.Parse(partsOfPublicKey[0]), BigInteger.Parse(partsOfPublicKey[1]));
+                        RSA.EncryptMessage();
+                        Console.WriteLine($"Encrypted message: {RSA.EncryptedMessage}");
+                        break;
+                    case 3:
+                        Console.Write("Message to decrypt: ");
+                        var messageToDecrypt = Console.ReadLine();
+                        while (messageToDecrypt == string.Empty)
+                        {
+                            Console.Write("Message can't be empty, enter message: ");
+                            message = Console.ReadLine();
+                        }
+                        RSA.SetMessageToDecrypt(messageToDecrypt);
+                        Console.Write("Private key: ");
+                        var privateKey = Console.ReadLine();
+                        privateKey = privateKey.Trim('(', ')');
+                        string[] partsOfPrivateKey = privateKey.Split(',');
+                        RSA.SetPrivateKey(BigInteger.Parse(partsOfPrivateKey[0]), BigInteger.Parse(partsOfPrivateKey[1]));
+                        RSA.DecryptMessage();
+                        Console.WriteLine($"Decrypted message: {RSA.DecryptedMessage}");
+                        break;
+                    case 4:
+                        return;
+                }
 
-            RSA.Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
-            Console.WriteLine($"Message to encrypt - {RSA.Message}");
-            RSA.EncryptMessage();
-            Console.WriteLine($"\nEncrypted message - {RSA.EncryptedMessage}");
-            RSA.DecryptMessage();
-            Console.WriteLine($"\nDecrypted message - {RSA.DecryptedMessage}");
+                Console.WriteLine();
+            }
         }
 
         static void ASCIIArtLogo()
