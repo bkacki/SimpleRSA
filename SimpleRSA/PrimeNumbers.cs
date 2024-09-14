@@ -9,10 +9,10 @@ namespace SimpleRSA
 {
     public class PrimeNumbers : IEnumerable<int>
     {
-        private const int _primesLimit = 10000;
+        private const int _primesLimit = 1000000;
         public IEnumerator<int> GetEnumerator()
         {
-            for (int i = 2; i <= _primesLimit; i++)
+            for (int i = 10; i <= _primesLimit; i++)
             {
                 if (IsPrime(i))
                 {
