@@ -9,29 +9,20 @@ namespace SimpleRSA
 {
     public static class RSA
     {
-        public static string EncryptedMessage { get; private set; }
-        public static string DecryptedMessage { get; private set; }
-
-        public static void EncryptMessage(RSAKey rsaKey, string message)
+        public static string EncryptMessage(RSAKey rsaKey, string message)
         {
             if(rsaKey._e == null || rsaKey._n == null || rsaKey.PublicKey == "Invalid public key format.")
-            {
-                EncryptedMessage = "Invalid public key.";
-                return;
-            }
+                return "Invalid public key.";
 
-            EncryptedMessage = BlockEncryption.EncryptWithBlocks(rsaKey, message);
+            return BlockEncryption.EncryptWithBlocks(rsaKey, message);
         }
 
-        public static void DecryptMessage(RSAKey rsaKey, string message)
+        public static string DecryptMessage(RSAKey rsaKey, string message)
         {
             if (rsaKey._d == null || rsaKey._n == null || rsaKey.PrivateKey == "Invalid private key format.")
-            {
-                DecryptedMessage = "Invalid private key.";
-                return;
-            }
+                return "Invalid private key.";
 
-            DecryptedMessage = BlockEncryption.DecryptWithBlocks(rsaKey, message);
+            return BlockEncryption.DecryptWithBlocks(rsaKey, message);
         }
 
         private static BigInteger _modularExponentiation(BigInteger pow, BigInteger q, BigInteger n)

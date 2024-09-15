@@ -72,10 +72,8 @@ Enter: ");
 
             RSAKey rsaKey = new RSAKey();
             rsaKey.PublicKey = publicKey;
-            
-            RSA.EncryptMessage(rsaKey, message);
 
-            Console.WriteLine($"Encrypted message: {RSA.EncryptedMessage}");
+            Console.WriteLine($"Encrypted message: {RSA.EncryptMessage(rsaKey, message)}");
         }
 
         static void DecryptMessage()
@@ -94,9 +92,7 @@ Enter: ");
             RSAKey rsaKey = new RSAKey();
             rsaKey.PrivateKey = privateKey;
 
-            RSA.DecryptMessage(rsaKey, messageToDecrypt);
-
-            Console.WriteLine($"Decrypted message: {RSA.DecryptedMessage}");
+            Console.WriteLine($"Decrypted message: {RSA.DecryptMessage(rsaKey, messageToDecrypt)}");
         }
 
         static void ASCIIArtLogo()
