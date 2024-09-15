@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Numerics;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SimpleRSA
 {
@@ -51,9 +52,9 @@ Enter: ");
 
         static void GenerateKeys()
         {
-            RSA.GenerateKeys();
-            Console.WriteLine($"Public key: {RSA.PublicKey}");
-            Console.WriteLine($"Private key: {RSA.PrivateKey}");
+            RSAKey rsaKey = new RSAKey();
+            Console.WriteLine($"Public key: {rsaKey.PublicKey}");
+            Console.WriteLine($"Private key: {rsaKey.PrivateKey}");
         }
 
         static void EncryptMessage()
@@ -66,18 +67,14 @@ Enter: ");
                 message = Console.ReadLine();
             }
 
-            RSA.Message = message;
-            Console.Write("Public key (format: (number1,number2)): ");
+            Console.Write("Public key: ");
             var publicKey = Console.ReadLine();
 
-            if (!TryParseKey(publicKey, out BigInteger exponent, out BigInteger modulus))
-            {
-                Console.WriteLine("Invalid public key format.");
-                return;
-            }
+            RSAKey rsaKey = new RSAKey();
+            rsaKey.PublicKey = publicKey;
+            
+            RSA.EncryptMessage(rsaKey, message);
 
-            RSA.SetPublicKey(exponent, modulus);
-            RSA.EncryptMessage();
             Console.WriteLine($"Encrypted message: {RSA.EncryptedMessage}");
         }
 
@@ -91,32 +88,15 @@ Enter: ");
                 messageToDecrypt = Console.ReadLine();
             }
 
-            RSA.SetMessageToDecrypt(messageToDecrypt);
-            Console.Write("Private key (format: (number1,number2)): ");
+            Console.Write("Private key: ");
             var privateKey = Console.ReadLine();
 
-            if (!TryParseKey(privateKey, out BigInteger exponent, out BigInteger modulus))
-            {
-                Console.WriteLine("Invalid private key format.");
-                return;
-            }
+            RSAKey rsaKey = new RSAKey();
+            rsaKey.PrivateKey = privateKey;
 
-            RSA.SetPrivateKey(exponent, modulus);
-            RSA.DecryptMessage();
+            RSA.DecryptMessage(rsaKey, messageToDecrypt);
+
             Console.WriteLine($"Decrypted message: {RSA.DecryptedMessage}");
-        }
-
-        static bool TryParseKey(string key, out BigInteger exponent, out BigInteger modulus)
-        {
-            exponent = 0;
-            modulus = 0;
-            if (string.IsNullOrWhiteSpace(key)) return false;
-
-            key = key.Trim('(', ')');
-            string[] parts = key.Split(',');
-            if (parts.Length != 2) return false;
-
-            return BigInteger.TryParse(parts[0], out exponent) && BigInteger.TryParse(parts[1], out modulus);
         }
 
         static void ASCIIArtLogo()
