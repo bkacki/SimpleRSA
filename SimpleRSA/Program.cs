@@ -102,13 +102,13 @@ Enter: ");
         static void ASCIIArtLogo()
         {
             Console.WriteLine(@"
-    ooooooooo.   .oooooo..o       .o.       
-   `888   `Y88. d8P'    `Y8      .888.      
-    888   .d88' Y88bo.          .8``888.     
-    888ooo88P'   ``Y8888o.     .8' `888.    
-    888`88b.        ```Y88b   .88ooo8888.   
-    888  `88b.  oo     .d8P  .8'     `888.  
-    o888o  o888o 88888888P'  o88o     o8888o 
+        ooooooooo.   .oooooo..o       .o.       
+       `888   `Y88. d8P'    `Y8      .888.      
+        888   .d88' Y88bo.          .8``888.     
+        888ooo88P'   ``Y8888o.     .8' `888.    
+        888`88b.        ```Y88b   .88ooo8888.   
+        888  `88b.  oo     .d8P  .8'     `888.  
+        o888o  o888o 88888888P'  o88o     o8888o 
 ");
         }
     }

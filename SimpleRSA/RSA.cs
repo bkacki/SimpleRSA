@@ -14,6 +14,12 @@ namespace SimpleRSA
 
         public static void EncryptMessage(RSAKey rsaKey, string message)
         {
+            if(rsaKey._e == null || rsaKey._n == null || rsaKey.PublicKey == "Invalid public key format.")
+            {
+                EncryptedMessage = "Invalid public key.";
+                return;
+            }
+
             byte[] encoded = Encoding.UTF8.GetBytes(message);
             List<BigInteger> encryptedBlocks = new List<BigInteger>();
 
@@ -68,6 +74,12 @@ namespace SimpleRSA
 
         public static void DecryptMessage(RSAKey rsaKey, string message)
         {
+            if (rsaKey._d == null || rsaKey._n == null || rsaKey.PrivateKey == "Invalid private key format.")
+            {
+                DecryptedMessage = "Invalid private key.";
+                return;
+            }
+
             byte[] encryptedBytes = Convert.FromBase64String(message);
             List<byte> decryptedBytes = new List<byte>();
 

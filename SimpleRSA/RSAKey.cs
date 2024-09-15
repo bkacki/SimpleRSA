@@ -29,6 +29,7 @@ namespace SimpleRSA
                 if (!TryParseKey(value, out BigInteger exponent, out BigInteger modulus))
                 {
                     Console.WriteLine("Invalid public key format.");
+                    _publicKey = "Invalid public key format.";
                     return;
                 }
                 _e = exponent;
@@ -49,6 +50,7 @@ namespace SimpleRSA
                 if (!TryParseKey(value, out BigInteger exponent, out BigInteger modulus))
                 {
                     Console.WriteLine("Invalid private key format.");
+                    _privateKey = "Invalid private key format.";
                     return;
                 }
                 _d = exponent;
